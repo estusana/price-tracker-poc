@@ -2,6 +2,8 @@
 
 A simple web scraper for tracking product prices from e-commerce websites.
 
+**Note**: This is a toy project designed for learning and simple sites. It won't work on major commercial sites like Amazon, eBay, or Walmart due to anti-bot protection and dynamic content loading.
+
 ## Features
 
 - Track single product price
@@ -27,9 +29,16 @@ npm start
 
 ## Usage
 
-1. Enter a product URL from an e-commerce site
+1. Enter a product URL from a simple e-commerce site
 2. Click "Track Price" to start monitoring
 3. View price history in the chart below
+
+## What Works
+
+- Small business websites with basic HTML structure
+- Simple Shopify/WordPress stores
+- Educational institution stores
+- Test pages (try: `http://localhost:3000/test-product.html`)
 
 ## Tech Stack
 
