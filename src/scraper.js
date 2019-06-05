@@ -41,6 +41,7 @@ class PriceScraper {
             // Try to find product name
             productName = $('h1').first().text().trim() ||
                 $('.product-title').first().text().trim() ||
+                $('.product-name').first().text().trim() ||
                 $('title').text().trim();
 
             return {
