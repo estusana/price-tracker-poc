@@ -17,13 +17,23 @@ class PriceScraper {
 
             const $ = cheerio.load(response.data);
 
-            // Basic price selectors for common e-commerce sites
+            // Comprehensive price selectors for real e-commerce sites
             const priceSelectors = [
-                '.price',
-                '.price-current',
-                '[data-price]',
-                '.product-price',
-                '.sale-price'
+                // Generic price classes
+                '.price', '.price-current', '.current-price', '.sale-price',
+                '.product-price', '.price-now', '.price-value', '.final-price',
+
+                // Common e-commerce patterns
+                '[data-price]', '[data-testid*="price"]', '[class*="price"]',
+                '.price-box .price', '.price-container .price',
+
+                // Specific patterns found on real sites
+                '.price-display', '.price-text', '.currency',
+                '.cost', '.amount', '.value',
+
+                // Fallback patterns
+                'span[class*="price"]', 'div[class*="price"]',
+                'span[id*="price"]', 'div[id*="price"]'
             ];
 
             let price = null;
@@ -63,12 +73,35 @@ class PriceScraper {
     }
 
     extractPrice(text) {
-        // Remove whitespace and extract price
+        // Remove whitespace and clean text
         const cleaned = text.replace(/\s+/g, ' ').trim();
-        const priceMatch = cleaned.match(/[\$£€]?(\d+(?:,\d{3})*(?:\.\d{2})?)/);
 
-        if (priceMatch) {
-            return parseFloat(priceMatch[1].replace(/,/g, ''));
+        // Multiple price patterns for different formats
+        const patterns = [
+            // Standard formats: $29.99, £45.00, €19.95
+            /[\$£€¥₹](\d+(?:,\d{3})*(?:\.\d{2})?)/,
+            // Formats without currency symbol: 29.99, 45.00
+            /(\d+(?:,\d{3})*\.\d{2})/,
+            // Integer prices: $29, £45
+            /[\$£€¥₹](\d+(?:,\d{3})*)/,
+            // Price with text: "Price: $29.99", "Cost $45"
+            /(?:price|cost|amount)[\s:]*[\$£€¥₹]?(\d+(?:,\d{3})*(?:\.\d{2})?)/i,
+            // Just numbers (last resort): 2999, 4500
+            /(\d{2,})/
+        ];
+
+        for (const pattern of patterns) {
+            const match = cleaned.match(pattern);
+            if (match) {
+                let price = parseFloat(match[1].replace(/,/g, ''));
+
+                // Handle cents-only prices (like 2999 = $29.99)
+                if (price > 1000 && !cleaned.includes('.')) {
+                    price = price / 100;
+                }
+
+                return price;
+            }
         }
 
         return null;
