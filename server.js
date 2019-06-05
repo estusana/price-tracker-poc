@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const apiRoutes = require('./src/routes/api');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -7,6 +8,9 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 app.use(express.static('public'));
+
+// API routes
+app.use('/api', apiRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
