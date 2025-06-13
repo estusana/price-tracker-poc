@@ -1,4 +1,4 @@
-# Price Tracker
+# Price Tracker (POC, not intended for production use)
 
 A simple web scraper for tracking product prices from e-commerce websites.
 
